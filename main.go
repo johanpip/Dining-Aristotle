@@ -5,25 +5,54 @@ import (
 	"time"
 )
 
+var chForks [5]chan bool
+var chPhils [5]chan bool
+var test chan bool
+
 func main() {
-	go spinner(100 * time.Millisecond)
-	const n = 45
-	fibN := fib(n) // slow
-	fmt.Printf("\rFibonacci(%d) = %d\n", n, fibN)
+
+	for i := 0; i < 5; i++ {
+		chForks[i] = make(chan bool)
+		chPhils[i] = make(chan bool)
+	}
+	for i := 0; i < 5; i++ {
+		go philosopher(i)
+		//go fork(i)
+		chForks[i] <- true
+	}
+
+	time.Sleep(30000 * time.Millisecond)
 }
 
-func spinner(delay time.Duration) {
+func philosopher(i int) {
+
 	for {
-		for _, r := range `-\|/` {
-			fmt.Printf("\r%c", r)
-			time.Sleep(delay)
+		var forkRight bool
+		forkLeft := <-chForks[i]
+
+		if i == 0 {
+			forkRight = <-chForks[4]
+		} else {
+			forkRight = <-chForks[i-1]
+		}
+
+		if forkLeft && forkRight {
+			chForks[i] <- false
+			if i == 0 {
+				chForks[4] <- false
+			} else {
+				chForks[i-1] <- false
+			}
+			fmt.Print("Imma eating namanamanm ")
+			fmt.Print(i)
+			time.Sleep(1000 * time.Millisecond)
 		}
 	}
+
 }
 
-func fib(x int) int {
-	if x < 2 {
-		return x
-	}
-	return fib(x-1) + fib(x-2)
-}
+//func fork(int i) {
+//	for {
+
+//	}
+//}
