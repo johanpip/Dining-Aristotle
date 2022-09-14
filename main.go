@@ -50,7 +50,7 @@ func philosopher(i int) {
 			} else {
 				chUsing[i-1] <- true
 			}
-			fmt.Println(i, " is eatingOWOWOWOWO ")
+			fmt.Println(i, " is eating")
 			eaten++
 			if eaten >= 3 {
 				fmt.Println(i, " ate 3 times!")
@@ -66,29 +66,21 @@ func philosopher(i int) {
 				chUsing[i-1] <- false
 			}
 
-			/*chForks[i] <- true
-			if i == 0 {
-				chForks[4] <- true
-			} else {
-				chForks[i-1] <- true
-			}*/
 		} else {
 			if forkLeft {
 				chUsing[i] <- !forkLeft
-				fmt.Println(i, "is putting single fork down")
-			}
-
-			if forkRight {
+				fmt.Println(i, " only had 1 fork ", i, " is putting left fork down")
+			} else if forkRight {
 				if i == 0 {
 					chUsing[4] <- !forkRight
 				} else {
 					chUsing[i-1] <- !forkRight
 				}
 
-				fmt.Println(i, "is putting single fork down")
+				fmt.Println(i, " only had 1 fork ", i, " is putting right fork down")
+			} else {
+				fmt.Println(i, " could not find any forks :(")
 			}
-
-			time.Sleep(10 * time.Millisecond)
 		}
 
 		if eaten == 3 {
