@@ -1,3 +1,8 @@
+//The phils will constantly check whether their neighboaring forks are avalible, if they are, they will eat, but if they aren't they will not pick up any forks.
+//A phil might eat more than 3 times however, which courses other phils to have to wait, but deadlocks will never happen, as it is random which phils will get to eat next, if there are multiple phils with two forks next to them
+//The program will finish once every phil has eaten at least 3 times. At that point, some phils might've eaten way more than 3 times, but eventually they will all eat 3 times, and the program will end.
+//So the runtime is all up to the "luck of the draw" ;)
+
 package main
 
 import (
