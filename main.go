@@ -7,6 +7,7 @@ import (
 
 var chForks [5]chan bool
 var chUsing [5]chan bool
+var finished int = 0
 
 //var chPhils [5]chan bool
 
@@ -19,18 +20,14 @@ func main() {
 	}
 	for i := 0; i < 5; i++ {
 		go fork(i)
-		//go philosopher(i)
-	}
-	time.Sleep(10 * time.Millisecond)
-
-	for i := 0; i < 5; i++ {
-		//go fork(i)
 		go philosopher(i)
-		//go fork(i)
-		//chForks[i] <- true
 	}
 
-	time.Sleep(17000 * time.Millisecond)
+	for true {
+		if finished == 5 {
+			return
+		}
+	}
 }
 
 func philosopher(i int) {
@@ -47,7 +44,13 @@ func philosopher(i int) {
 		}
 
 		if forkLeft && forkRight {
-			fmt.Println(i, " is eating ")
+			chUsing[i] <- true
+			if i == 0 {
+				chUsing[4] <- true
+			} else {
+				chUsing[i-1] <- true
+			}
+			fmt.Println(i, " is eatingOWOWOWOWO ")
 			eaten++
 			if eaten >= 3 {
 				fmt.Println(i, " ate 3 times!")
@@ -69,6 +72,27 @@ func philosopher(i int) {
 			} else {
 				chForks[i-1] <- true
 			}*/
+		} else {
+			if forkLeft {
+				chUsing[i] <- !forkLeft
+				fmt.Println(i, "is putting single fork down")
+			}
+
+			if forkRight {
+				if i == 0 {
+					chUsing[4] <- !forkRight
+				} else {
+					chUsing[i-1] <- !forkRight
+				}
+
+				fmt.Println(i, "is putting single fork down")
+			}
+
+			time.Sleep(10 * time.Millisecond)
+		}
+
+		if eaten == 3 {
+			finished++
 		}
 	}
 
@@ -83,6 +107,8 @@ func fork(i int) {
 		if !inUse {
 			fmt.Println("fork", i, "is free now")
 			chForks[i] <- true
+		} else {
+			chForks[i] <- false
 		}
 	}
 
